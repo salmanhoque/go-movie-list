@@ -17,6 +17,8 @@ type movie struct {
 	movieRating float64
 }
 
+type movies []movie
+
 var help = `
 Welcome to "Go Movie Go", You one stop movie directory.
 
@@ -39,7 +41,7 @@ exit
 `
 
 func main() {
-	var movies []movie
+	var movies movies
 	fmt.Println(help)
 
 	for {
@@ -47,12 +49,12 @@ func main() {
 
 		switch action {
 		case "add":
-			m := addMovie()
-			movies = append(movies, m)
+			var m movie
+			movies = append(movies, m.addMovie())
 		case "list":
-			listMovies(movies)
+			movies.listMovies()
 		case "save":
-			saveMovies(movies)
+			movies.saveMovies()
 		case "read":
 			movies = readMoviesFromFile()
 		case "help":
@@ -73,11 +75,11 @@ func prompt() string {
 	return strings.TrimSpace(text)
 }
 
-func listMovies(movies []movie) {
+func (m movies) listMovies() {
 	fmt.Print("\n")
 	fmt.Printf("|%-30s|%-30s|%-30s|\n", "Movie Name", "Rlease Year", "Rating")
 
-	for _, movie := range movies {
+	for _, movie := range m {
 		fmt.Printf("|%-30s|%-30s|%-30.2f|\n",
 			movie.movieName, movie.releaseYear, movie.movieRating)
 	}
@@ -85,7 +87,7 @@ func listMovies(movies []movie) {
 	fmt.Print("\n")
 }
 
-func saveMovies(movies []movie) {
+func (m movies) saveMovies() {
 	addReader := bufio.NewReader(os.Stdin)
 	fmt.Println("Enter a filename: ")
 	filename, _ := addReader.ReadString('\n')
@@ -99,7 +101,7 @@ func saveMovies(movies []movie) {
 	write := csv.NewWriter(file)
 	defer write.Flush()
 
-	for _, movie := range movies {
+	for _, movie := range m {
 		ratingToStr := strconv.FormatFloat(movie.movieRating, 'f', 2, 64)
 		data := []string{movie.movieName, movie.releaseYear, ratingToStr}
 		err := write.Write(data)
@@ -111,7 +113,7 @@ func saveMovies(movies []movie) {
 	println("Your movies list saved successfully!")
 }
 
-func readMoviesFromFile() []movie {
+func readMoviesFromFile() movies {
 	var movies []movie
 
 	b, err := ioutil.ReadFile("test.csv")
@@ -142,8 +144,7 @@ func readMoviesFromFile() []movie {
 	return movies
 }
 
-func addMovie() movie {
-	var m movie
+func (m movie) addMovie() movie {
 	addReader := bufio.NewReader(os.Stdin)
 
 	fmt.Println("Enter movie name: ")
