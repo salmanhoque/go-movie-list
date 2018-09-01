@@ -7,13 +7,14 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
 type movie struct {
 	movieName   string
 	releaseYear string
-	movieRating string
+	movieRating float64
 }
 
 var help = `
@@ -61,10 +62,10 @@ func main() {
 
 			fmt.Println("Rating: ")
 			text, _ = addReader.ReadString('\n')
-			movie.movieRating = strings.TrimSpace(text)
+			movie.movieRating, _ = strconv.ParseFloat(strings.TrimSpace(text), 64)
 
 			// Print added movie
-			t := fmt.Sprintf("Added \"%s\"(%s) with a rating %s\n",
+			t := fmt.Sprintf("Added \"%s\"(%s) with a rating %.2f\n",
 				movie.movieName, movie.releaseYear, movie.movieRating)
 			fmt.Println(t)
 
@@ -77,7 +78,7 @@ func main() {
 			fmt.Printf("|%-30s|%-30s|%-30s|\n", "Movie Name", "Rlease Year", "Rating")
 
 			for _, movie := range movies {
-				fmt.Printf("|%-30s|%-30s|%-30s|\n",
+				fmt.Printf("|%-30s|%-30s|%-30.2f|\n",
 					movie.movieName, movie.releaseYear, movie.movieRating)
 			}
 
@@ -99,7 +100,8 @@ func main() {
 			defer write.Flush()
 
 			for _, movie := range movies {
-				data := []string{movie.movieName, movie.releaseYear, movie.movieRating}
+				ratingToStr := strconv.FormatFloat(movie.movieRating, 'f', 2, 64)
+				data := []string{movie.movieName, movie.releaseYear, ratingToStr}
 				err := write.Write(data)
 				if err != nil {
 					log.Fatal("Can't write to file", err)
@@ -123,10 +125,12 @@ func main() {
 			}
 
 			for _, m := range records {
+				rating, _ := strconv.ParseFloat(m[2], 64)
+
 				m := movie{
 					movieName:   m[0],
 					releaseYear: m[1],
-					movieRating: m[2],
+					movieRating: rating,
 				}
 
 				movies = append(movies, m)
