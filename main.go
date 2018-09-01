@@ -45,30 +45,23 @@ func main() {
 	for {
 		action := prompt()
 
-		if action == "add" {
+		switch action {
+		case "add":
 			m := addMovie()
 			movies = append(movies, m)
-		}
-
-		if action == "list" {
+		case "list":
 			listMovies(movies)
-		}
-
-		if action == "save" {
+		case "save":
 			saveMovies(movies)
-		}
-
-		if action == "read" {
+		case "read":
 			movies = readMoviesFromFile()
-		}
-
-		if action == "exit" {
-			fmt.Println("\nBye Bye :)")
-			break
-		}
-
-		if action == "help" {
+		case "help":
 			fmt.Println(help)
+		case "exit":
+			fmt.Println("\nBye Bye :)")
+			os.Exit(0)
+		default:
+			prompt()
 		}
 	}
 }
