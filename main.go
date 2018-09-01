@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/csv"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -30,13 +31,15 @@ save
  - Save movie to a file
 read
  - Load your movies from a file
+help
+ - See all commands 
 exit
  - Exit out from this app.
 `
 
 func main() {
 	var movies []movie
-	// fmt.Println(help)
+	fmt.Println(help)
 
 	for {
 		reader := bufio.NewReader(os.Stdin)
@@ -106,9 +109,39 @@ func main() {
 			println("Your movies list saved successfully!")
 		}
 
+		if action == "read" {
+			b, err := ioutil.ReadFile("test.csv")
+			if err != nil {
+				log.Fatal("Can't read the file", err)
+			}
+
+			r := csv.NewReader(strings.NewReader(string(b)))
+
+			records, err := r.ReadAll()
+			if err != nil {
+				log.Fatal("Can't read all", err)
+			}
+
+			for _, m := range records {
+				m := movie{
+					movieName:   m[0],
+					releaseYear: m[1],
+					movieRating: m[2],
+				}
+
+				movies = append(movies, m)
+			}
+
+			fmt.Println("\n Got your movies!")
+		}
+
 		if action == "exit" {
 			fmt.Println("\nBye Bye :)")
 			break
+		}
+
+		if action == "help" {
+			fmt.Println(help)
 		}
 	}
 }
