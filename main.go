@@ -56,7 +56,7 @@ func main() {
 		case "save":
 			movies.saveMovies()
 		case "read":
-			movies = readMoviesFromFile()
+			movies.readMoviesFromFile()
 		case "help":
 			fmt.Println(help)
 		case "exit":
@@ -113,9 +113,7 @@ func (m movies) saveMovies() {
 	println("Your movies list saved successfully!")
 }
 
-func readMoviesFromFile() movies {
-	var movies []movie
-
+func (m *movies) readMoviesFromFile() {
 	b, err := ioutil.ReadFile("test.csv")
 	if err != nil {
 		log.Fatal("Can't read the file", err)
@@ -128,20 +126,19 @@ func readMoviesFromFile() movies {
 		log.Fatal("Can't read all", err)
 	}
 
-	for _, m := range records {
-		rating, _ := strconv.ParseFloat(m[2], 64)
+	for _, r := range records {
+		rating, _ := strconv.ParseFloat(r[2], 64)
 
-		m := movie{
-			movieName:   m[0],
-			releaseYear: m[1],
+		om := movie{
+			movieName:   r[0],
+			releaseYear: r[1],
 			movieRating: rating,
 		}
 
-		movies = append(movies, m)
+		*m = append(*m, om)
 	}
 
 	fmt.Println("\n Got your movies!")
-	return movies
 }
 
 func (m movie) addMovie() movie {
