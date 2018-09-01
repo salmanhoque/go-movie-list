@@ -43,33 +43,11 @@ func main() {
 	fmt.Println(help)
 
 	for {
-		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("What you would like to do: ")
-		text, _ := reader.ReadString('\n')
-		action := strings.TrimSpace(text)
+		action := prompt()
 
 		if action == "add" {
-			var movie movie
-			addReader := bufio.NewReader(os.Stdin)
-
-			fmt.Println("Enter movie name: ")
-			text, _ := addReader.ReadString('\n')
-			movie.movieName = strings.TrimSpace(text)
-
-			fmt.Println("Enter release year: ")
-			text, _ = addReader.ReadString('\n')
-			movie.releaseYear = strings.TrimSpace(text)
-
-			fmt.Println("Rating: ")
-			text, _ = addReader.ReadString('\n')
-			movie.movieRating, _ = strconv.ParseFloat(strings.TrimSpace(text), 64)
-
-			// Print added movie
-			t := fmt.Sprintf("Added \"%s\"(%s) with a rating %.2f\n",
-				movie.movieName, movie.releaseYear, movie.movieRating)
-			fmt.Println(t)
-
-			movies = append(movies, movie)
+			m := addMovie()
+			movies = append(movies, m)
 		}
 
 		if action == "list" {
@@ -93,6 +71,13 @@ func main() {
 			fmt.Println(help)
 		}
 	}
+}
+
+func prompt() string {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("What you would like to do: ")
+	text, _ := reader.ReadString('\n')
+	return strings.TrimSpace(text)
 }
 
 func listMovies(movies []movie) {
@@ -162,4 +147,28 @@ func readMoviesFromFile() []movie {
 
 	fmt.Println("\n Got your movies!")
 	return movies
+}
+
+func addMovie() movie {
+	var m movie
+	addReader := bufio.NewReader(os.Stdin)
+
+	fmt.Println("Enter movie name: ")
+	text, _ := addReader.ReadString('\n')
+	m.movieName = strings.TrimSpace(text)
+
+	fmt.Println("Enter release year: ")
+	text, _ = addReader.ReadString('\n')
+	m.releaseYear = strings.TrimSpace(text)
+
+	fmt.Println("Rating: ")
+	text, _ = addReader.ReadString('\n')
+	m.movieRating, _ = strconv.ParseFloat(strings.TrimSpace(text), 64)
+
+	// Print added movie
+	t := fmt.Sprintf("Added \"%s\"(%s) with a rating %.2f\n",
+		m.movieName, m.releaseYear, m.movieRating)
+	fmt.Println(t)
+
+	return m
 }
