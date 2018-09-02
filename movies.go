@@ -43,26 +43,24 @@ func (m movies) saveMovies() {
 		ratingToStr := strconv.FormatFloat(movie.movieRating, 'f', 2, 64)
 		data := []string{movie.movieName, movie.releaseYear, ratingToStr}
 		err := write.Write(data)
-		if err != nil {
-			log.Fatal("Can't write to file", err)
-		}
+		checkError("Can't write to file", err)
 	}
 
-	println("Your movies list saved successfully!")
+	println("Your movies saved successfully!")
 }
 
 func (m *movies) readMoviesFromFile() {
-	b, err := ioutil.ReadFile("test.csv")
-	if err != nil {
-		log.Fatal("Can't read the file", err)
-	}
+	addReader := bufio.NewReader(os.Stdin)
+	fmt.Println("Enter your filename: ")
+	filename, _ := addReader.ReadString('\n')
+
+	b, err := ioutil.ReadFile(strings.TrimSpace(filename) + ".csv")
+	checkError("Can't read the file", err)
 
 	r := csv.NewReader(strings.NewReader(string(b)))
 
 	records, err := r.ReadAll()
-	if err != nil {
-		log.Fatal("Can't read all", err)
-	}
+	checkError("Can't read all", err)
 
 	for _, r := range records {
 		rating, _ := strconv.ParseFloat(r[2], 64)
@@ -76,5 +74,11 @@ func (m *movies) readMoviesFromFile() {
 		*m = append(*m, om)
 	}
 
-	fmt.Println("\n Got your movies!")
+	m.listMovies()
+}
+
+func checkError(message string, err error) {
+	if err != nil {
+		log.Fatal(message, err)
+	}
 }
