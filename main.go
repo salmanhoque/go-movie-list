@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 )
@@ -10,6 +11,8 @@ import (
 var movieR movieRepo
 
 func main() {
+	movieR.all()
+
 	help()
 
 	for {
@@ -19,7 +22,7 @@ func main() {
 		case "add":
 			addMovie()
 		case "list":
-			listMovies()
+			listMovies(movieR)
 		case "help":
 			help()
 		case "exit":
@@ -66,7 +69,8 @@ func addMovie() {
 	year := askQuestion("Enter release year:")
 
 	ratingStr := askQuestion("Rating:")
-	rating, _ := strconv.ParseFloat(ratingStr, 64)
+	rating, err := strconv.ParseFloat(ratingStr, 64)
+	checkError("String to float parse failed", err)
 
 	m := movieR.add(name, year, rating)
 
@@ -74,14 +78,20 @@ func addMovie() {
 		m.MovieName, m.ReleaseYear, m.MovieRating)
 }
 
-func listMovies() {
+func listMovies(mr movieRepo) {
 	fmt.Println()
 	fmt.Printf("|%-30s|%-30s|%-30s|\n", "Movie Name", "Rlease Year", "Rating")
 
-	for _, movie := range movieR.all() {
+	for _, movie := range mr {
 		fmt.Printf("|%-30s|%-30s|%-30.2f|\n",
 			movie.MovieName, movie.ReleaseYear, movie.MovieRating)
 	}
 
 	fmt.Println()
+}
+
+func checkError(message string, err error) {
+	if err != nil {
+		log.Fatal(message, err)
+	}
 }

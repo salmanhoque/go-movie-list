@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"os"
 )
 
@@ -19,38 +18,28 @@ func (m *movieRepo) add(name string, year string, rating float64) movie {
 	return newMoview
 }
 
-func (m movieRepo) save() {
-	moviesFromFile := m.all()
-	m = append(m, moviesFromFile...)
-
+func (m *movieRepo) save() {
 	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY, 0644)
 	checkError("Unable to create/file the file", err)
 
-	jsonData, _ := json.MarshalIndent(m, "", "  ")
+	jsonData, err := json.MarshalIndent(m, "", "  ")
+	checkError("Unable to encode to JSON", err)
 	_, err = f.Write(jsonData)
 	checkError("Unable to write to the file", err)
 
 	defer f.Close()
 }
 
-func (m movieRepo) all() movieRepo {
-	var fromFile movieRepo
-
+func (m *movieRepo) all() movieRepo {
 	if _, err := os.Stat(fileName); os.IsNotExist(err) {
-		return fromFile
+		return *m
 	}
 
 	data, err := ioutil.ReadFile(fileName)
 	checkError("Can't read the file", err)
 
-	err = json.Unmarshal(data, &fromFile)
+	err = json.Unmarshal(data, &m)
 	checkError("Can't read all", err)
 
-	return fromFile
-}
-
-func checkError(message string, err error) {
-	if err != nil {
-		log.Fatal(message, err)
-	}
+	return *m
 }
