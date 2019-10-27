@@ -4,10 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 )
 
+var movieR movieRepo
+
 func main() {
-	var movies movieRepo
 	help()
 
 	for {
@@ -15,14 +17,9 @@ func main() {
 
 		switch action {
 		case "add":
-			var m movie
-			movies = append(movies, m.addMovie())
+			addMovie()
 		case "list":
-			movies.listMovies()
-		case "save":
-			movies.saveMovies()
-		case "read":
-			movies.listMoviesFromFile()
+			listMovies()
 		case "help":
 			help()
 		case "exit":
@@ -47,8 +44,8 @@ Here are some of the command you can do using this great movie app!
 add:              Add new movie name with year and rating
 list:             List all movies
 list-by-rating:   List all movies sorted by rating
-save:             Save movie to a file
-read:             Load your movies from a file
+find-by-year:     List all movies of a year
+find-by-name:     Find a movie by name
 help:             See all commands 
 exit:             Exit out from this app.
 `
@@ -62,4 +59,29 @@ func askQuestion(question string) string {
 	r.Scan()
 
 	return r.Text()
+}
+
+func addMovie() {
+	name := askQuestion("Enter movie name:")
+	year := askQuestion("Enter release year:")
+
+	ratingStr := askQuestion("Rating:")
+	rating, _ := strconv.ParseFloat(ratingStr, 64)
+
+	m := movieR.add(name, year, rating)
+
+	fmt.Printf("\nAdded %s(%s) with a rating %.2f\n\n",
+		m.MovieName, m.ReleaseYear, m.MovieRating)
+}
+
+func listMovies() {
+	fmt.Println()
+	fmt.Printf("|%-30s|%-30s|%-30s|\n", "Movie Name", "Rlease Year", "Rating")
+
+	for _, movie := range movieR.all() {
+		fmt.Printf("|%-30s|%-30s|%-30.2f|\n",
+			movie.MovieName, movie.ReleaseYear, movie.MovieRating)
+	}
+
+	fmt.Println()
 }

@@ -2,53 +2,51 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 )
 
 const fileName = "movies.json"
 
 type movieRepo []movie
 
-func (m movieRepo) listMovies() {
-	fmt.Println()
-	fmt.Printf("|%-30s|%-30s|%-30s|\n", "Movie Name", "Rlease Year", "Rating")
+func (m *movieRepo) add(name string, year string, rating float64) movie {
+	newMoview := movie{MovieName: name, ReleaseYear: year, MovieRating: rating}
+	*m = append(*m, newMoview)
+	m.save()
 
-	for _, movie := range m {
-		fmt.Printf("|%-30s|%-30s|%-30.2f|\n",
-			movie.MovieName, movie.ReleaseYear, movie.MovieRating)
-	}
-
-	fmt.Println()
+	return newMoview
 }
 
-func (m movieRepo) saveMovies() {
-	moviesFromFile := m.readMoviesFromFile()
+func (m movieRepo) save() {
+	moviesFromFile := m.all()
 	m = append(m, moviesFromFile...)
 
-	jsonData, _ := json.MarshalIndent(m, "", "  ")
-	err := ioutil.WriteFile(fileName, jsonData, 0644)
-	checkError("Can't write to file", err)
+	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY, 0644)
+	checkError("Unable to create/file the file", err)
 
-	println("Your movies saved successfully!")
+	jsonData, _ := json.MarshalIndent(m, "", "  ")
+	_, err = f.Write(jsonData)
+	checkError("Unable to write to the file", err)
+
+	defer f.Close()
 }
 
-func (m movieRepo) readMoviesFromFile() movieRepo {
+func (m movieRepo) all() movieRepo {
+	var fromFile movieRepo
+
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		return fromFile
+	}
+
 	data, err := ioutil.ReadFile(fileName)
 	checkError("Can't read the file", err)
 
-	var moviesFromFile movieRepo
-	err = json.Unmarshal(data, &moviesFromFile)
+	err = json.Unmarshal(data, &fromFile)
 	checkError("Can't read all", err)
 
-	return moviesFromFile
-}
-
-func (m movieRepo) listMoviesFromFile() {
-	movies := m.readMoviesFromFile()
-
-	movies.listMovies()
+	return fromFile
 }
 
 func checkError(message string, err error) {
