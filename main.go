@@ -4,11 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
 )
 
 func main() {
-	var movies movies
+	var movies movieRepo
 	help()
 
 	for {
@@ -23,7 +22,7 @@ func main() {
 		case "save":
 			movies.saveMovies()
 		case "read":
-			movies.readMoviesFromFile()
+			movies.listMoviesFromFile()
 		case "help":
 			help()
 		case "exit":
@@ -36,10 +35,7 @@ func main() {
 }
 
 func prompt() string {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("What you would like to do: ")
-	text, _ := reader.ReadString('\n')
-	return strings.TrimSpace(text)
+	return askQuestion("What you would like to do:")
 }
 
 func help() {
@@ -58,4 +54,12 @@ exit:             Exit out from this app.
 `
 
 	fmt.Println(help)
+}
+
+func askQuestion(question string) string {
+	r := bufio.NewScanner(os.Stdin)
+	fmt.Printf(question + " ")
+	r.Scan()
+
+	return r.Text()
 }
