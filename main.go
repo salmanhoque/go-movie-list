@@ -3,15 +3,19 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
+
+	"github.com/pkg/errors"
 )
 
 var movieR movieRepo
 
 func main() {
-	movieR.all()
+	err := movieR.all()
+	if err != nil {
+		printError(err)
+	}
 
 	help()
 
@@ -70,9 +74,16 @@ func addMovie() {
 
 	ratingStr := askQuestion("Rating:")
 	rating, err := strconv.ParseFloat(ratingStr, 64)
-	checkError("String to float parse failed", err)
+	if err != nil {
+		printError(errors.Wrap(err, "Rating should be a number"))
+		return
+	}
 
-	m := movieR.add(name, year, rating)
+	m, err := movieR.add(name, year, rating)
+	if err != nil {
+		printError(err)
+		return
+	}
 
 	fmt.Printf("\nAdded %s(%s) with a rating %.2f\n\n",
 		m.MovieName, m.ReleaseYear, m.MovieRating)
@@ -90,8 +101,6 @@ func listMovies(mr movieRepo) {
 	fmt.Println()
 }
 
-func checkError(message string, err error) {
-	if err != nil {
-		log.Fatal(message, err)
-	}
+func printError(err error) {
+	fmt.Printf("\n\n=== Error: %+v\n\n", err)
 }
