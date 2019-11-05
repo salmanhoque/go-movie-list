@@ -1,2 +1,5 @@
 run:
-	go run *.go
+	go run .
+
+test:
+	go test

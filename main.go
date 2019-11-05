@@ -9,10 +9,19 @@ import (
 	"github.com/pkg/errors"
 )
 
-var movieR movieRepo
+// Persistence is used to save and read from file or database
+type Persistence interface {
+	save(m []movie, fileName string) error
+	read(m *[]movie, fileName string) error
+}
+
+const fileName = "movies.json"
+
+var fileStorage jsonFileStorage
+var movieR movieRepo = movieRepo{storage: fileStorage}
 
 func main() {
-	err := movieR.all()
+	err := movieR.storage.read(&movieR.movieList, fileName)
 	if err != nil {
 		printError(err)
 	}
@@ -93,7 +102,7 @@ func listMovies(mr movieRepo) {
 	fmt.Println()
 	fmt.Printf("|%-30s|%-30s|%-30s|\n", "Movie Name", "Rlease Year", "Rating")
 
-	for _, movie := range mr {
+	for _, movie := range mr.movieList {
 		fmt.Printf("|%-30s|%-30s|%-30.2f|\n",
 			movie.MovieName, movie.ReleaseYear, movie.MovieRating)
 	}
