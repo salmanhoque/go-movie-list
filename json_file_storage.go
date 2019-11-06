@@ -11,10 +11,10 @@ import (
 // a data type that implements the interface
 type jsonFileStorage struct{}
 
-func (s jsonFileStorage) save(m []movie, fileName string) error {
+func (s jsonFileStorage) save(list interface{}, fileName string) error {
 	var err error
 	var jsonData []byte
-	jsonData, err = json.MarshalIndent(m, "", "  ")
+	jsonData, err = json.MarshalIndent(list, "", "  ")
 	if err != nil {
 		return errors.Wrap(err, "Unable to encode to JSON")
 	}
@@ -33,7 +33,7 @@ func (s jsonFileStorage) save(m []movie, fileName string) error {
 	return err
 }
 
-func (s jsonFileStorage) read(m *[]movie, fileName string) error {
+func (s jsonFileStorage) read(list interface{}, fileName string) error {
 	var data []byte
 	var err error
 
@@ -45,7 +45,7 @@ func (s jsonFileStorage) read(m *[]movie, fileName string) error {
 		return errors.Wrap(err, "Can't able to read the file!")
 	}
 
-	if err = json.Unmarshal(data, &m); err != nil {
+	if err = json.Unmarshal(data, &list); err != nil {
 		return errors.Wrap(err, "Can't able to parse the file")
 	}
 

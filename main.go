@@ -11,8 +11,8 @@ import (
 
 // Persistence is used to save and read from file or database
 type Persistence interface {
-	save(m []movie, fileName string) error
-	read(m *[]movie, fileName string) error
+	save(list interface{}, fileName string) error
+	read(list interface{}, fileName string) error
 }
 
 const fileName = "movies.json"

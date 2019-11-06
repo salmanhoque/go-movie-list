@@ -18,12 +18,12 @@ type MockStorage struct {
 	mock.Mock
 }
 
-func (ms *MockStorage) save(m []movie, fileName string) error {
+func (ms *MockStorage) save(list interface{}, fileName string) error {
 	args := ms.Called()
 	return args.Error(0)
 }
 
-func (ms *MockStorage) read(m *[]movie, fileName string) error {
+func (ms *MockStorage) read(list interface{}, fileName string) error {
 	args := ms.Called()
 	return args.Error(0)
 }
