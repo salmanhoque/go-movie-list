@@ -36,6 +36,7 @@ var _ = Describe("Movie Repo", func() {
 				m   movieRepo
 				err error
 			)
+
 			BeforeEach(func() {
 				storage := new(MockStorage)
 				m = movieRepo{storage: storage}
