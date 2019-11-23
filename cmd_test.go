@@ -72,7 +72,7 @@ var _ = Describe("Main Interface", func() {
 		})
 	})
 
-	Describe("sort movies by rating", func() {
+	Describe("list-by-rating", func() {
 		It("sorts movies by rating", func() {
 			args := []string{"filename", "list-by-rating"}
 
@@ -81,6 +81,18 @@ var _ = Describe("Main Interface", func() {
 			})
 
 			Expect(strings.TrimSpace(output)).Should(MatchRegexp("End Game"))
+		})
+	})
+
+	Describe("find-by-year", func() {
+		It("finds movies of a year", func() {
+			args := []string{"filename", "find-by-year", "--year", "2019"}
+
+			output := captureStdout(func() {
+				run(mr, args)
+			})
+
+			Expect(strings.TrimSpace(output)).Should(MatchRegexp("Infinity War"))
 		})
 	})
 })

@@ -18,12 +18,14 @@ func run(mr movieRepo, args []string) {
 	if len(args) > 1 {
 		switch args[1] {
 		case "list":
-			listMovies(mr)
+			listMovies(mr.movieList)
 		case "add":
 			addMovie(mr, args)
 		case "list-by-rating":
 			mr.sortByRating()
-			listMovies(mr)
+			listMovies(mr.movieList)
+		case "find-by-year":
+			findByYear(mr, args)
 		default:
 			help()
 		}
@@ -76,11 +78,21 @@ func addMovie(mr movieRepo, args []string) {
 	fmt.Printf("\nAdded %s(%s) with a rating %.2f\n\n", m.MovieName, m.ReleaseYear, m.MovieRating)
 }
 
-func listMovies(mr movieRepo) {
+func findByYear(mr movieRepo, args []string) {
+	findByYearCommand := flag.NewFlagSet("find-by-year", flag.ContinueOnError)
+	year := findByYearCommand.Int("year", 0, "Enter a year to filter movies")
+
+	findByYearCommand.Parse(args[2:])
+
+	movies := mr.findByYear(*year)
+	listMovies(movies)
+}
+
+func listMovies(m []movie) {
 	fmt.Println()
 	fmt.Printf("|%-30s|%-30s|%-30s|\n", "Movie Name", "Rlease Year", "Rating")
 
-	for _, movie := range mr.movieList {
+	for _, movie := range m {
 		fmt.Printf("|%-30s|%-30s|%-30.2f|\n",
 			movie.MovieName, movie.ReleaseYear, movie.MovieRating)
 	}

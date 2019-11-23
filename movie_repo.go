@@ -1,6 +1,9 @@
 package main
 
-import "sort"
+import (
+	"sort"
+	"strconv"
+)
 
 type movieRepo struct {
 	movieList []movie
@@ -29,4 +32,16 @@ func (m *movieRepo) sortByRating() {
 	})
 
 	m.movieList = movies
+}
+
+func (m *movieRepo) findByYear(year int) []movie {
+	var movies []movie
+
+	for _, movie := range m.movieList {
+		if releaseYear, _ := strconv.Atoi(movie.ReleaseYear); releaseYear == year {
+			movies = append(movies, movie)
+		}
+	}
+
+	return movies
 }

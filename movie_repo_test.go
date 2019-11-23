@@ -97,4 +97,25 @@ var _ = Describe("Movie Repo", func() {
 			Expect(mr.movieList).Should(Equal(sortedMovies))
 		})
 	})
+
+	Describe("findByYear", func() {
+		It("returns movies sorted by rating", func() {
+			var storage jsonFileStorage
+			hasSolo := movie{"Han Solo", "2018", 6.5}
+			infinityWar := movie{"Infinity War", "2018", 9.2}
+			spiderMan := movie{"Spider Man", "2017", 8.2}
+
+			movies := []movie{hasSolo, infinityWar, spiderMan}
+			moviesInYear2018 := []movie{hasSolo, infinityWar}
+
+			mr := movieRepo{
+				movieList: movies,
+				storage:   storage,
+			}
+
+			actual := mr.findByYear(2018)
+
+			Expect(actual).Should(Equal(moviesInYear2018))
+		})
+	})
 })
