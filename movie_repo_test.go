@@ -77,4 +77,24 @@ var _ = Describe("Movie Repo", func() {
 		})
 	})
 
+	Describe("sortByRating", func() {
+		It("returns movies sorted by rating", func() {
+			hasSolo := movie{"Han Solo", "2018", 6.5}
+			endGame := movie{"End Game", "2019", 9.2}
+			spiderMan := movie{"Spider Man", "2017", 8.2}
+
+			movies := []movie{hasSolo, endGame, spiderMan}
+			var storage jsonFileStorage
+			sortedMovies := []movie{endGame, spiderMan, hasSolo}
+
+			mr := movieRepo{
+				movieList: movies,
+				storage:   storage,
+			}
+
+			mr.sortByRating()
+
+			Expect(mr.movieList).Should(Equal(sortedMovies))
+		})
+	})
 })

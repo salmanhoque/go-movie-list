@@ -21,6 +21,9 @@ func run(mr movieRepo, args []string) {
 			listMovies(mr)
 		case "add":
 			addMovie(mr, args)
+		case "list-by-rating":
+			mr.sortByRating()
+			listMovies(mr)
 		default:
 			help()
 		}

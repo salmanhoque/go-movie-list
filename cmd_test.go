@@ -71,4 +71,16 @@ var _ = Describe("Main Interface", func() {
 			Expect(strings.TrimSpace(output)).Should(MatchRegexp("Added Joker"))
 		})
 	})
+
+	Describe("sort movies by rating", func() {
+		It("sorts movies by rating", func() {
+			args := []string{"filename", "list-by-rating"}
+
+			output := captureStdout(func() {
+				run(mr, args)
+			})
+
+			Expect(strings.TrimSpace(output)).Should(MatchRegexp("End Game"))
+		})
+	})
 })
