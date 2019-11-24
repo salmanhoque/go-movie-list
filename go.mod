@@ -1,4 +1,4 @@
-module github.com/salmanhoque/movie-list
+module github.com/salmanhoque/go-movie-list
 
 go 1.13
 
