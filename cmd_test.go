@@ -5,10 +5,18 @@ import (
 	"io"
 	"os"
 	"strings"
+	"testing"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	domain "github.com/salmanhoque/go-movie-list/domain/movie"
+	"github.com/stretchr/testify/mock"
 )
+
+func TestMain(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "Movie command-line app")
+}
 
 func captureStdout(f func()) string {
 	old := os.Stdout
@@ -25,26 +33,40 @@ func captureStdout(f func()) string {
 	return buf.String()
 }
 
+type MockStorage struct {
+	mock.Mock
+}
+
+func (ms *MockStorage) Save(list interface{}, fileName string) error {
+	args := ms.Called()
+	return args.Error(0)
+}
+
+func (ms *MockStorage) Read(list interface{}, fileName string) error {
+	args := ms.Called()
+	return args.Error(0)
+}
+
 var _ = Describe("Main Interface", func() {
 	var (
-		mr  movieRepo
+		mr  domain.MovieRepo
 		err error
 	)
 
 	BeforeEach(func() {
 		storage := new(MockStorage)
-		movies := []movie{
+		movies := []domain.Movie{
 			{"End Game", "2018", 9.2},
 			{"Infinity War", "2019", 9.0},
 		}
 
-		mr = movieRepo{
-			movieList: movies,
-			storage:   storage,
+		mr = domain.MovieRepo{
+			MovieList: movies,
+			Storage:   storage,
 		}
 
-		storage.On("read").Return(err)
-		storage.On("save").Return(err)
+		storage.On("Read").Return(err)
+		storage.On("Save").Return(err)
 	})
 
 	Describe("list", func() {

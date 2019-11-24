@@ -1,18 +1,17 @@
 package main
 
-import "os"
-
-// Persistence is used to save and read from file or database
-type Persistence interface {
-	save(list interface{}, fileName string) error
-	read(list interface{}, fileName string) error
-}
+import (
+	domain "github.com/salmanhoque/go-movie-list/domain/movie"
+	storage "github.com/salmanhoque/go-movie-list/storage"
+	"os"
+)
 
 const fileName = "movies.json"
 
 func main() {
-	var fileStorage jsonFileStorage
-	var mr movieRepo = movieRepo{storage: fileStorage}
+	var fileStorage storage.JSONFileStorage
+
+	mr := domain.MovieRepo{Storage: fileStorage}
 
 	run(mr, os.Args)
 }

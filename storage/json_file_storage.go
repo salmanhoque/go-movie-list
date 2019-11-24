@@ -1,4 +1,4 @@
-package main
+package storage
 
 import (
 	"encoding/json"
@@ -8,10 +8,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-// a data type that implements the interface
-type jsonFileStorage struct{}
+// JSONFileStorage - a data type that implements the interface
+type JSONFileStorage struct{}
 
-func (s jsonFileStorage) save(list interface{}, fileName string) error {
+// Save - saves struct as JSON
+func (s JSONFileStorage) Save(list interface{}, fileName string) error {
 	var err error
 	var jsonData []byte
 	jsonData, err = json.MarshalIndent(list, "", "  ")
@@ -33,7 +34,8 @@ func (s jsonFileStorage) save(list interface{}, fileName string) error {
 	return err
 }
 
-func (s jsonFileStorage) read(list interface{}, fileName string) error {
+// Read - reads a JSON file
+func (s JSONFileStorage) Read(list interface{}, fileName string) error {
 	var data []byte
 	var err error
 
