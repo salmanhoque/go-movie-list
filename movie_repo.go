@@ -1,6 +1,7 @@
 package main
 
 import (
+	"regexp"
 	"sort"
 	"strconv"
 )
@@ -39,6 +40,19 @@ func (m *movieRepo) findByYear(year int) []movie {
 
 	for _, movie := range m.movieList {
 		if releaseYear, _ := strconv.Atoi(movie.ReleaseYear); releaseYear == year {
+			movies = append(movies, movie)
+		}
+	}
+
+	return movies
+}
+
+func (m *movieRepo) findByTitle(name string) []movie {
+	var movies []movie
+	re := regexp.MustCompile("(?i)" + name)
+
+	for _, movie := range m.movieList {
+		if re.Match([]byte(movie.MovieName)) {
 			movies = append(movies, movie)
 		}
 	}

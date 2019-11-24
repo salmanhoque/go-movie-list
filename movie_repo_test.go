@@ -79,13 +79,13 @@ var _ = Describe("Movie Repo", func() {
 
 	Describe("sortByRating", func() {
 		It("returns movies sorted by rating", func() {
-			hasSolo := movie{"Han Solo", "2018", 6.5}
+			hanSolo := movie{"Han Solo", "2018", 6.5}
 			endGame := movie{"End Game", "2019", 9.2}
 			spiderMan := movie{"Spider Man", "2017", 8.2}
 
-			movies := []movie{hasSolo, endGame, spiderMan}
+			movies := []movie{hanSolo, endGame, spiderMan}
 			var storage jsonFileStorage
-			sortedMovies := []movie{endGame, spiderMan, hasSolo}
+			sortedMovies := []movie{endGame, spiderMan, hanSolo}
 
 			mr := movieRepo{
 				movieList: movies,
@@ -101,12 +101,12 @@ var _ = Describe("Movie Repo", func() {
 	Describe("findByYear", func() {
 		It("returns movies sorted by rating", func() {
 			var storage jsonFileStorage
-			hasSolo := movie{"Han Solo", "2018", 6.5}
+			hanSolo := movie{"Han Solo", "2018", 6.5}
 			infinityWar := movie{"Infinity War", "2018", 9.2}
 			spiderMan := movie{"Spider Man", "2017", 8.2}
 
-			movies := []movie{hasSolo, infinityWar, spiderMan}
-			moviesInYear2018 := []movie{hasSolo, infinityWar}
+			movies := []movie{hanSolo, infinityWar, spiderMan}
+			moviesInYear2018 := []movie{hanSolo, infinityWar}
 
 			mr := movieRepo{
 				movieList: movies,
@@ -116,6 +116,38 @@ var _ = Describe("Movie Repo", func() {
 			actual := mr.findByYear(2018)
 
 			Expect(actual).Should(Equal(moviesInYear2018))
+		})
+	})
+
+	Describe("findByName", func() {
+		var storage jsonFileStorage
+		hanSolo := movie{"Han Solo", "2018", 6.5}
+		infinityWar := movie{"Infinity War", "2018", 9.2}
+		spiderMan := movie{"Spider Man", "2017", 8.2}
+
+		movies := []movie{hanSolo, infinityWar, spiderMan}
+
+		mr := movieRepo{
+			movieList: movies,
+			storage:   storage,
+		}
+
+		Context("when search keyword is in titlecase", func() {
+			It("returns matched movies", func() {
+				actual := mr.findByTitle("Solo")
+				expected := []movie{hanSolo}
+
+				Expect(actual).Should(Equal(expected))
+			})
+		})
+
+		Context("when search keyword is in lowercase", func() {
+			It("returns matched movies", func() {
+				actual := mr.findByTitle("solo")
+				expected := []movie{hanSolo}
+
+				Expect(actual).Should(Equal(expected))
+			})
 		})
 	})
 })

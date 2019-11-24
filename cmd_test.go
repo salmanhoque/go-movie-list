@@ -95,4 +95,16 @@ var _ = Describe("Main Interface", func() {
 			Expect(strings.TrimSpace(output)).Should(MatchRegexp("Infinity War"))
 		})
 	})
+
+	Describe("find-by-title", func() {
+		It("finds movies by a keyword", func() {
+			args := []string{"filename", "find-by-title", "--keyword", "game"}
+
+			output := captureStdout(func() {
+				run(mr, args)
+			})
+
+			Expect(strings.TrimSpace(output)).Should(MatchRegexp("End Game"))
+		})
+	})
 })

@@ -1,7 +1,5 @@
 package main
 
-// https://blog.neillyons.io/mocking-command-line-flags-and-stdin-in-go/
-
 import (
 	"bufio"
 	"flag"
@@ -26,6 +24,8 @@ func run(mr movieRepo, args []string) {
 			listMovies(mr.movieList)
 		case "find-by-year":
 			findByYear(mr, args)
+		case "find-by-title":
+			findByTitle(mr, args)
 		default:
 			help()
 		}
@@ -40,9 +40,12 @@ func help() {
 	fmt.Printf("%-30s%-30s\n", "list", "Show all movies")
 	fmt.Printf("%-30s%-30s\n", "add",
 		"add new movie. add --name [movie name] --year [release year] --rating [your rating]")
-	fmt.Printf("%-30s%-30s\n", "list-by-rating", "List all movies sorted by rating")
-	fmt.Printf("%-30s%-30s\n", "find-by-year", "List all movies of a year")
-	fmt.Printf("%-30s%-30s\n", "find-by-name", "Find a movie by name")
+	fmt.Printf("%-30s%-30s\n", "list-by-rating",
+		"List all movies sorted by rating")
+	fmt.Printf("%-30s%-30s\n", "find-by-year",
+		"List all movies of a year, find-by-year --year 2019")
+	fmt.Printf("%-30s%-30s\n", "find-by-title",
+		"Find a movie by a keyword, find-by-title --keyword game")
 	fmt.Printf("%-30s%-30s\n", "help", "show all commands")
 	fmt.Println()
 }
@@ -85,6 +88,16 @@ func findByYear(mr movieRepo, args []string) {
 	findByYearCommand.Parse(args[2:])
 
 	movies := mr.findByYear(*year)
+	listMovies(movies)
+}
+
+func findByTitle(mr movieRepo, args []string) {
+	findByYearCommand := flag.NewFlagSet("find-by-title", flag.ContinueOnError)
+	keyword := findByYearCommand.String("keyword", "", "Enter a keyword to filter movies")
+
+	findByYearCommand.Parse(args[2:])
+
+	movies := mr.findByTitle(*keyword)
 	listMovies(movies)
 }
 
