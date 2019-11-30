@@ -6,7 +6,6 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	storage "github.com/salmanhoque/go-movie-list/storage"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -85,7 +84,7 @@ var _ = Describe("Movie Repo", func() {
 			spiderMan := Movie{"Spider Man", "2017", 8.2}
 
 			movies := []Movie{hanSolo, endGame, spiderMan}
-			var s storage.JSONFileStorage
+			s := new(MockStorage)
 			sortedMovies := []Movie{endGame, spiderMan, hanSolo}
 
 			mr := MovieRepo{
@@ -101,7 +100,7 @@ var _ = Describe("Movie Repo", func() {
 
 	Describe("findByYear", func() {
 		It("returns movies sorted by rating", func() {
-			var s storage.JSONFileStorage
+			s := new(MockStorage)
 			hanSolo := Movie{"Han Solo", "2018", 6.5}
 			infinityWar := Movie{"Infinity War", "2018", 9.2}
 			spiderMan := Movie{"Spider Man", "2017", 8.2}
@@ -121,7 +120,7 @@ var _ = Describe("Movie Repo", func() {
 	})
 
 	Describe("findByName", func() {
-		var s storage.JSONFileStorage
+		s := new(MockStorage)
 		hanSolo := Movie{"Han Solo", "2018", 6.5}
 		infinityWar := Movie{"Infinity War", "2018", 9.2}
 		spiderMan := Movie{"Spider Man", "2017", 8.2}
