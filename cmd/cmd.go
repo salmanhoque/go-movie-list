@@ -4,12 +4,13 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	domain "github.com/salmanhoque/go-movie-list/domain/movie"
 	"os"
+
+	"github.com/salmanhoque/go-movie-list/domain/movie"
 )
 
 // Run - stars the movie app in command line
-func Run(mr domain.MovieRepo, args []string) {
+func Run(mr movie.Repo, args []string) {
 	err := mr.Storage.Read(&mr.MovieList)
 	if err != nil {
 		printError(err)
@@ -60,7 +61,7 @@ func askQuestion(question string) string {
 	return r.Text()
 }
 
-func addMovie(mr domain.MovieRepo, args []string) {
+func addMovie(mr movie.Repo, args []string) {
 	addCommand := flag.NewFlagSet("add", flag.ContinueOnError)
 	name := addCommand.String("name", "", "Movie name")
 	year := addCommand.String("year", "", "Release year")
@@ -83,7 +84,7 @@ func addMovie(mr domain.MovieRepo, args []string) {
 	fmt.Printf("\nAdded %s(%s) with a rating %.2f\n\n", m.MovieName, m.ReleaseYear, m.MovieRating)
 }
 
-func findByYear(mr domain.MovieRepo, args []string) {
+func findByYear(mr movie.Repo, args []string) {
 	findByYearCommand := flag.NewFlagSet("find-by-year", flag.ContinueOnError)
 	year := findByYearCommand.Int("year", 0, "Enter a year to filter movies")
 
@@ -93,7 +94,7 @@ func findByYear(mr domain.MovieRepo, args []string) {
 	listMovies(movies)
 }
 
-func findByTitle(mr domain.MovieRepo, args []string) {
+func findByTitle(mr movie.Repo, args []string) {
 	findByYearCommand := flag.NewFlagSet("find-by-title", flag.ContinueOnError)
 	keyword := findByYearCommand.String("keyword", "", "Enter a keyword to filter movies")
 
@@ -103,7 +104,7 @@ func findByTitle(mr domain.MovieRepo, args []string) {
 	listMovies(movies)
 }
 
-func listMovies(m []domain.Movie) {
+func listMovies(m []movie.Schema) {
 	fmt.Println()
 	fmt.Printf("|%-30s|%-30s|%-30s|\n", "Movie Name", "Rlease Year", "Rating")
 

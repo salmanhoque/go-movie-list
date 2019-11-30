@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// JSONFileStorage - a data type that implements the interface
+// JSONFileStorage - a data type that implements persistance interface.
 type JSONFileStorage struct {
 	Filename string
 }

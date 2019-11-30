@@ -1,4 +1,4 @@
-package domain
+package movie
 
 import (
 	"regexp"
@@ -12,18 +12,18 @@ type Persistence interface {
 	Read(list interface{}) error
 }
 
-// MovieRepo is used to save and query movies
-type MovieRepo struct {
-	MovieList []Movie
+// Repo is used to save and query movies
+type Repo struct {
+	MovieList []Schema
 	Storage   Persistence
 }
 
 // Add movie to the list
-func (m *MovieRepo) Add(name string, year string, rating float64) (Movie, error) {
+func (m *Repo) Add(name string, year string, rating float64) (Schema, error) {
 	var err error
-	var newMoview Movie
+	var newMoview Schema
 
-	newMoview = Movie{MovieName: name, ReleaseYear: year, MovieRating: rating}
+	newMoview = Schema{MovieName: name, ReleaseYear: year, MovieRating: rating}
 	m.MovieList = append(m.MovieList, newMoview)
 	err = m.Storage.Save(m.MovieList)
 	if err != nil {
@@ -34,7 +34,7 @@ func (m *MovieRepo) Add(name string, year string, rating float64) (Movie, error)
 }
 
 // SortByRating - sort movie by rating
-func (m *MovieRepo) SortByRating() {
+func (m *Repo) SortByRating() {
 	movies := m.MovieList
 
 	sort.Slice(movies, func(i, j int) bool {
@@ -45,8 +45,8 @@ func (m *MovieRepo) SortByRating() {
 }
 
 // FindByYear - find movies of a year
-func (m *MovieRepo) FindByYear(year int) []Movie {
-	var movies []Movie
+func (m *Repo) FindByYear(year int) []Schema {
+	var movies []Schema
 
 	for _, movie := range m.MovieList {
 		if releaseYear, _ := strconv.Atoi(movie.ReleaseYear); releaseYear == year {
@@ -58,8 +58,8 @@ func (m *MovieRepo) FindByYear(year int) []Movie {
 }
 
 // FindByTitle - find movie with a keyword search
-func (m *MovieRepo) FindByTitle(name string) []Movie {
-	var movies []Movie
+func (m *Repo) FindByTitle(name string) []Schema {
+	var movies []Schema
 	re := regexp.MustCompile("(?i)" + name)
 
 	for _, movie := range m.MovieList {

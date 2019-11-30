@@ -1,7 +1,7 @@
-package domain
+package movie
 
-// Movie schema
-type Movie struct {
+// Schema - movie schema
+type Schema struct {
 	MovieName   string
 	ReleaseYear string
 	MovieRating float64

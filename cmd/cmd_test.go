@@ -9,7 +9,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	domain "github.com/salmanhoque/go-movie-list/domain/movie"
+	"github.com/salmanhoque/go-movie-list/domain/movie"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -49,18 +49,18 @@ func (ms *MockStorage) Read(list interface{}) error {
 
 var _ = Describe("Main Interface", func() {
 	var (
-		mr  domain.MovieRepo
+		mr  movie.Repo
 		err error
 	)
 
 	BeforeEach(func() {
 		storage := new(MockStorage)
-		movies := []domain.Movie{
-			{"End Game", "2018", 9.2},
-			{"Infinity War", "2019", 9.0},
+		movies := []movie.Schema{
+			{MovieName: "End Game", ReleaseYear: "2018", MovieRating: 9.2},
+			{MovieName: "Infinity War", ReleaseYear: "2019", MovieRating: 9.0},
 		}
 
-		mr = domain.MovieRepo{
+		mr = movie.Repo{
 			MovieList: movies,
 			Storage:   storage,
 		}

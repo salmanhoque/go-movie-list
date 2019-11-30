@@ -1,4 +1,4 @@
-package domain
+package movie
 
 import (
 	"errors"
@@ -33,13 +33,13 @@ var _ = Describe("Movie Repo", func() {
 	Describe("add", func() {
 		Context("when movie fields are valid", func() {
 			var (
-				m   MovieRepo
+				m   Repo
 				err error
 			)
 
 			BeforeEach(func() {
 				storage := new(MockStorage)
-				m = MovieRepo{Storage: storage}
+				m = Repo{Storage: storage}
 				storage.On("Save").Return(err)
 			})
 
@@ -48,13 +48,13 @@ var _ = Describe("Movie Repo", func() {
 				releaseYear := "2019"
 				rating := 9.0
 
-				expectedValue := Movie{movieName, releaseYear, rating}
+				expectedValue := Schema{movieName, releaseYear, rating}
 
 				Expect(m.Add(movieName, releaseYear, rating)).To(Equal(expectedValue))
 			})
 
 			It("append movie to the list", func() {
-				m.MovieList = append(m.MovieList, Movie{"Infinity War", "2018", 9.5})
+				m.MovieList = append(m.MovieList, Schema{"Infinity War", "2018", 9.5})
 
 				m.Add("End Game", "2019", 9.0)
 
@@ -65,7 +65,7 @@ var _ = Describe("Movie Repo", func() {
 		Context("when movie fields are not valid", func() {
 			It("returns an error message", func() {
 				storage := new(MockStorage)
-				m := MovieRepo{
+				m := Repo{
 					Storage: storage,
 				}
 				expecteErr := errors.New("Something went wrong")
@@ -79,15 +79,15 @@ var _ = Describe("Movie Repo", func() {
 
 	Describe("sortByRating", func() {
 		It("returns movies sorted by rating", func() {
-			hanSolo := Movie{"Han Solo", "2018", 6.5}
-			endGame := Movie{"End Game", "2019", 9.2}
-			spiderMan := Movie{"Spider Man", "2017", 8.2}
+			hanSolo := Schema{"Han Solo", "2018", 6.5}
+			endGame := Schema{"End Game", "2019", 9.2}
+			spiderMan := Schema{"Spider Man", "2017", 8.2}
 
-			movies := []Movie{hanSolo, endGame, spiderMan}
+			movies := []Schema{hanSolo, endGame, spiderMan}
 			s := new(MockStorage)
-			sortedMovies := []Movie{endGame, spiderMan, hanSolo}
+			sortedMovies := []Schema{endGame, spiderMan, hanSolo}
 
-			mr := MovieRepo{
+			mr := Repo{
 				MovieList: movies,
 				Storage:   s,
 			}
@@ -101,14 +101,14 @@ var _ = Describe("Movie Repo", func() {
 	Describe("findByYear", func() {
 		It("returns movies sorted by rating", func() {
 			s := new(MockStorage)
-			hanSolo := Movie{"Han Solo", "2018", 6.5}
-			infinityWar := Movie{"Infinity War", "2018", 9.2}
-			spiderMan := Movie{"Spider Man", "2017", 8.2}
+			hanSolo := Schema{"Han Solo", "2018", 6.5}
+			infinityWar := Schema{"Infinity War", "2018", 9.2}
+			spiderMan := Schema{"Spider Man", "2017", 8.2}
 
-			movies := []Movie{hanSolo, infinityWar, spiderMan}
-			moviesInYear2018 := []Movie{hanSolo, infinityWar}
+			movies := []Schema{hanSolo, infinityWar, spiderMan}
+			moviesInYear2018 := []Schema{hanSolo, infinityWar}
 
-			mr := MovieRepo{
+			mr := Repo{
 				MovieList: movies,
 				Storage:   s,
 			}
@@ -121,13 +121,13 @@ var _ = Describe("Movie Repo", func() {
 
 	Describe("findByName", func() {
 		s := new(MockStorage)
-		hanSolo := Movie{"Han Solo", "2018", 6.5}
-		infinityWar := Movie{"Infinity War", "2018", 9.2}
-		spiderMan := Movie{"Spider Man", "2017", 8.2}
+		hanSolo := Schema{"Han Solo", "2018", 6.5}
+		infinityWar := Schema{"Infinity War", "2018", 9.2}
+		spiderMan := Schema{"Spider Man", "2017", 8.2}
 
-		movies := []Movie{hanSolo, infinityWar, spiderMan}
+		movies := []Schema{hanSolo, infinityWar, spiderMan}
 
-		mr := MovieRepo{
+		mr := Repo{
 			MovieList: movies,
 			Storage:   s,
 		}
@@ -135,7 +135,7 @@ var _ = Describe("Movie Repo", func() {
 		Context("when search keyword is in titlecase", func() {
 			It("returns matched movies", func() {
 				actual := mr.FindByTitle("Solo")
-				expected := []Movie{hanSolo}
+				expected := []Schema{hanSolo}
 
 				Expect(actual).Should(Equal(expected))
 			})
@@ -144,7 +144,7 @@ var _ = Describe("Movie Repo", func() {
 		Context("when search keyword is in lowercase", func() {
 			It("returns matched movies", func() {
 				actual := mr.FindByTitle("solo")
-				expected := []Movie{hanSolo}
+				expected := []Schema{hanSolo}
 
 				Expect(actual).Should(Equal(expected))
 			})
