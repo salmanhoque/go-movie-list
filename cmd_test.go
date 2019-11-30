@@ -37,12 +37,12 @@ type MockStorage struct {
 	mock.Mock
 }
 
-func (ms *MockStorage) Save(list interface{}, fileName string) error {
+func (ms *MockStorage) Save(list interface{}) error {
 	args := ms.Called()
 	return args.Error(0)
 }
 
-func (ms *MockStorage) Read(list interface{}, fileName string) error {
+func (ms *MockStorage) Read(list interface{}) error {
 	args := ms.Called()
 	return args.Error(0)
 }

@@ -6,12 +6,10 @@ import (
 	"strconv"
 )
 
-const fileName = "movies.json"
-
 // Persistence is used to save and read from file or database
 type Persistence interface {
-	Save(list interface{}, fileName string) error
-	Read(list interface{}, fileName string) error
+	Save(list interface{}) error
+	Read(list interface{}) error
 }
 
 // MovieRepo is used to save and query movies
@@ -27,7 +25,7 @@ func (m *MovieRepo) Add(name string, year string, rating float64) (Movie, error)
 
 	newMoview = Movie{MovieName: name, ReleaseYear: year, MovieRating: rating}
 	m.MovieList = append(m.MovieList, newMoview)
-	err = m.Storage.Save(m.MovieList, fileName)
+	err = m.Storage.Save(m.MovieList)
 	if err != nil {
 		return newMoview, err
 	}

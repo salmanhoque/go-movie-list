@@ -6,10 +6,12 @@ import (
 	"os"
 )
 
-const fileName = "movies.json"
+const filename = "movies.json"
 
 func main() {
-	var fileStorage storage.JSONFileStorage
+	fileStorage := storage.JSONFileStorage{
+		Filename: filename,
+	}
 
 	mr := domain.MovieRepo{Storage: fileStorage}
 

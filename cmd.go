@@ -9,7 +9,7 @@ import (
 )
 
 func run(mr domain.MovieRepo, args []string) {
-	err := mr.Storage.Read(&mr.MovieList, fileName)
+	err := mr.Storage.Read(&mr.MovieList)
 	if err != nil {
 		printError(err)
 	}

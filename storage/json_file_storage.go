@@ -9,10 +9,12 @@ import (
 )
 
 // JSONFileStorage - a data type that implements the interface
-type JSONFileStorage struct{}
+type JSONFileStorage struct {
+	Filename string
+}
 
 // Save - saves struct as JSON
-func (s JSONFileStorage) Save(list interface{}, fileName string) error {
+func (s JSONFileStorage) Save(list interface{}) error {
 	var err error
 	var jsonData []byte
 	jsonData, err = json.MarshalIndent(list, "", "  ")
@@ -20,7 +22,7 @@ func (s JSONFileStorage) Save(list interface{}, fileName string) error {
 		return errors.Wrap(err, "Unable to encode to JSON")
 	}
 
-	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(s.Filename, os.O_CREATE|os.O_WRONLY, 0644)
 	defer f.Close()
 	if err != nil {
 		return errors.Wrap(err, "Unable to create a file")
@@ -35,15 +37,15 @@ func (s JSONFileStorage) Save(list interface{}, fileName string) error {
 }
 
 // Read - reads a JSON file
-func (s JSONFileStorage) Read(list interface{}, fileName string) error {
+func (s JSONFileStorage) Read(list interface{}) error {
 	var data []byte
 	var err error
 
-	if _, err = os.Stat(fileName); os.IsNotExist(err) {
+	if _, err = os.Stat(s.Filename); os.IsNotExist(err) {
 		return errors.Wrap(err, "Can't able to find the file!")
 	}
 
-	if data, err = ioutil.ReadFile(fileName); err != nil {
+	if data, err = ioutil.ReadFile(s.Filename); err != nil {
 		return errors.Wrap(err, "Can't able to read the file!")
 	}
 
