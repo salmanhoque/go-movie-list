@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"bufio"
@@ -8,7 +8,8 @@ import (
 	"os"
 )
 
-func run(mr domain.MovieRepo, args []string) {
+// Run - stars the movie app in command line
+func Run(mr domain.MovieRepo, args []string) {
 	err := mr.Storage.Read(&mr.MovieList)
 	if err != nil {
 		printError(err)

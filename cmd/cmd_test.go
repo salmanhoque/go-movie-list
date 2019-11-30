@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"bytes"
@@ -74,7 +74,7 @@ var _ = Describe("Main Interface", func() {
 			args := []string{"filename", "list"}
 
 			output := captureStdout(func() {
-				run(mr, args)
+				Run(mr, args)
 			})
 
 			Expect(output).Should(MatchRegexp("End Game"))
@@ -87,7 +87,7 @@ var _ = Describe("Main Interface", func() {
 			args := []string{"filename", "add", "--name", "Joker", "--year", "2019", "--rating", "9.2"}
 
 			output := captureStdout(func() {
-				run(mr, args)
+				Run(mr, args)
 			})
 
 			Expect(strings.TrimSpace(output)).Should(MatchRegexp("Added Joker"))
@@ -99,7 +99,7 @@ var _ = Describe("Main Interface", func() {
 			args := []string{"filename", "list-by-rating"}
 
 			output := captureStdout(func() {
-				run(mr, args)
+				Run(mr, args)
 			})
 
 			Expect(strings.TrimSpace(output)).Should(MatchRegexp("End Game"))
@@ -111,7 +111,7 @@ var _ = Describe("Main Interface", func() {
 			args := []string{"filename", "find-by-year", "--year", "2019"}
 
 			output := captureStdout(func() {
-				run(mr, args)
+				Run(mr, args)
 			})
 
 			Expect(strings.TrimSpace(output)).Should(MatchRegexp("Infinity War"))
@@ -123,7 +123,7 @@ var _ = Describe("Main Interface", func() {
 			args := []string{"filename", "find-by-title", "--keyword", "game"}
 
 			output := captureStdout(func() {
-				run(mr, args)
+				Run(mr, args)
 			})
 
 			Expect(strings.TrimSpace(output)).Should(MatchRegexp("End Game"))

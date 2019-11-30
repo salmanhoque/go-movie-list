@@ -1,9 +1,11 @@
 package main
 
 import (
+	"os"
+
+	cmd "github.com/salmanhoque/go-movie-list/cmd"
 	domain "github.com/salmanhoque/go-movie-list/domain/movie"
 	storage "github.com/salmanhoque/go-movie-list/storage"
-	"os"
 )
 
 const filename = "movies.json"
@@ -15,5 +17,5 @@ func main() {
 
 	mr := domain.MovieRepo{Storage: fileStorage}
 
-	run(mr, os.Args)
+	cmd.Run(mr, os.Args)
 }
