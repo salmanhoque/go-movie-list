@@ -10,8 +10,8 @@ import (
 )
 
 // Run - stars the movie app in command line
-func Run(mr movie.Repo, args []string) {
-	err := mr.Storage.Read(&mr.MovieList)
+func Run(repo movie.Repo, args []string) {
+	err := repo.Storage.Read(&repo.MovieList)
 	if err != nil {
 		printError(err)
 	}
@@ -19,16 +19,16 @@ func Run(mr movie.Repo, args []string) {
 	if len(args) > 1 {
 		switch args[1] {
 		case "list":
-			listMovies(mr.MovieList)
+			listMovies(repo.MovieList)
 		case "add":
-			addMovie(mr, args)
+			addMovie(repo, args)
 		case "list-by-rating":
-			mr.SortByRating()
-			listMovies(mr.MovieList)
+			repo.SortByRating()
+			listMovies(repo.MovieList)
 		case "find-by-year":
-			findByYear(mr, args)
+			findByYear(repo, args)
 		case "find-by-title":
-			findByTitle(mr, args)
+			findByTitle(repo, args)
 		default:
 			help()
 		}
@@ -61,7 +61,7 @@ func askQuestion(question string) string {
 	return r.Text()
 }
 
-func addMovie(mr movie.Repo, args []string) {
+func addMovie(repo movie.Repo, args []string) {
 	addCommand := flag.NewFlagSet("add", flag.ContinueOnError)
 	name := addCommand.String("name", "", "Movie name")
 	year := addCommand.String("year", "", "Release year")
@@ -75,7 +75,7 @@ func addMovie(mr movie.Repo, args []string) {
 		return
 	}
 
-	m, err := mr.Add(*name, *year, *rating)
+	m, err := repo.Add(*name, *year, *rating)
 	if err != nil {
 		printError(err)
 		return
@@ -84,23 +84,23 @@ func addMovie(mr movie.Repo, args []string) {
 	fmt.Printf("\nAdded %s(%s) with a rating %.2f\n\n", m.MovieName, m.ReleaseYear, m.MovieRating)
 }
 
-func findByYear(mr movie.Repo, args []string) {
+func findByYear(repo movie.Repo, args []string) {
 	findByYearCommand := flag.NewFlagSet("find-by-year", flag.ContinueOnError)
 	year := findByYearCommand.Int("year", 0, "Enter a year to filter movies")
 
 	findByYearCommand.Parse(args[2:])
 
-	movies := mr.FindByYear(*year)
+	movies := repo.FindByYear(*year)
 	listMovies(movies)
 }
 
-func findByTitle(mr movie.Repo, args []string) {
+func findByTitle(repo movie.Repo, args []string) {
 	findByYearCommand := flag.NewFlagSet("find-by-title", flag.ContinueOnError)
 	keyword := findByYearCommand.String("keyword", "", "Enter a keyword to filter movies")
 
 	findByYearCommand.Parse(args[2:])
 
-	movies := mr.FindByTitle(*keyword)
+	movies := repo.FindByTitle(*keyword)
 	listMovies(movies)
 }
 

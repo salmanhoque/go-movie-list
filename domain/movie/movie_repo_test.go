@@ -33,13 +33,13 @@ var _ = Describe("Movie Repo", func() {
 	Describe("add", func() {
 		Context("when movie fields are valid", func() {
 			var (
-				m   Repo
+				r   Repo
 				err error
 			)
 
 			BeforeEach(func() {
 				storage := new(MockStorage)
-				m = Repo{Storage: storage}
+				r = Repo{Storage: storage}
 				storage.On("Save").Return(err)
 			})
 
@@ -50,28 +50,28 @@ var _ = Describe("Movie Repo", func() {
 
 				expectedValue := Schema{movieName, releaseYear, rating}
 
-				Expect(m.Add(movieName, releaseYear, rating)).To(Equal(expectedValue))
+				Expect(r.Add(movieName, releaseYear, rating)).To(Equal(expectedValue))
 			})
 
 			It("append movie to the list", func() {
-				m.MovieList = append(m.MovieList, Schema{"Infinity War", "2018", 9.5})
+				r.MovieList = append(r.MovieList, Schema{"Infinity War", "2018", 9.5})
 
-				m.Add("End Game", "2019", 9.0)
+				r.Add("End Game", "2019", 9.0)
 
-				Expect(len(m.MovieList)).To(Equal(2))
+				Expect(len(r.MovieList)).To(Equal(2))
 			})
 		})
 
 		Context("when movie fields are not valid", func() {
 			It("returns an error message", func() {
 				storage := new(MockStorage)
-				m := Repo{
+				r := Repo{
 					Storage: storage,
 				}
 				expecteErr := errors.New("Something went wrong")
 				storage.On("Save").Return(expecteErr)
 
-				_, actual := m.Add("End Game", "2019", 9.0)
+				_, actual := r.Add("End Game", "2019", 9.0)
 				Expect(actual).Should(MatchError(expecteErr))
 			})
 		})
@@ -87,14 +87,14 @@ var _ = Describe("Movie Repo", func() {
 			s := new(MockStorage)
 			sortedMovies := []Schema{endGame, spiderMan, hanSolo}
 
-			mr := Repo{
+			r := Repo{
 				MovieList: movies,
 				Storage:   s,
 			}
 
-			mr.SortByRating()
+			r.SortByRating()
 
-			Expect(mr.MovieList).Should(Equal(sortedMovies))
+			Expect(r.MovieList).Should(Equal(sortedMovies))
 		})
 	})
 
@@ -108,12 +108,12 @@ var _ = Describe("Movie Repo", func() {
 			movies := []Schema{hanSolo, infinityWar, spiderMan}
 			moviesInYear2018 := []Schema{hanSolo, infinityWar}
 
-			mr := Repo{
+			r := Repo{
 				MovieList: movies,
 				Storage:   s,
 			}
 
-			actual := mr.FindByYear(2018)
+			actual := r.FindByYear(2018)
 
 			Expect(actual).Should(Equal(moviesInYear2018))
 		})
@@ -127,14 +127,14 @@ var _ = Describe("Movie Repo", func() {
 
 		movies := []Schema{hanSolo, infinityWar, spiderMan}
 
-		mr := Repo{
+		r := Repo{
 			MovieList: movies,
 			Storage:   s,
 		}
 
 		Context("when search keyword is in titlecase", func() {
 			It("returns matched movies", func() {
-				actual := mr.FindByTitle("Solo")
+				actual := r.FindByTitle("Solo")
 				expected := []Schema{hanSolo}
 
 				Expect(actual).Should(Equal(expected))
@@ -143,7 +143,7 @@ var _ = Describe("Movie Repo", func() {
 
 		Context("when search keyword is in lowercase", func() {
 			It("returns matched movies", func() {
-				actual := mr.FindByTitle("solo")
+				actual := r.FindByTitle("solo")
 				expected := []Schema{hanSolo}
 
 				Expect(actual).Should(Equal(expected))

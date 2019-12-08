@@ -49,8 +49,8 @@ func (ms *MockStorage) Read(list interface{}) error {
 
 var _ = Describe("Main Interface", func() {
 	var (
-		mr  movie.Repo
-		err error
+		repo movie.Repo
+		err  error
 	)
 
 	BeforeEach(func() {
@@ -60,7 +60,7 @@ var _ = Describe("Main Interface", func() {
 			{MovieName: "Infinity War", ReleaseYear: "2019", MovieRating: 9.0},
 		}
 
-		mr = movie.Repo{
+		repo = movie.Repo{
 			MovieList: movies,
 			Storage:   storage,
 		}
@@ -74,7 +74,7 @@ var _ = Describe("Main Interface", func() {
 			args := []string{"filename", "list"}
 
 			output := captureStdout(func() {
-				Run(mr, args)
+				Run(repo, args)
 			})
 
 			Expect(output).Should(MatchRegexp("End Game"))
@@ -87,7 +87,7 @@ var _ = Describe("Main Interface", func() {
 			args := []string{"filename", "add", "--name", "Joker", "--year", "2019", "--rating", "9.2"}
 
 			output := captureStdout(func() {
-				Run(mr, args)
+				Run(repo, args)
 			})
 
 			Expect(strings.TrimSpace(output)).Should(MatchRegexp("Added Joker"))
@@ -99,7 +99,7 @@ var _ = Describe("Main Interface", func() {
 			args := []string{"filename", "list-by-rating"}
 
 			output := captureStdout(func() {
-				Run(mr, args)
+				Run(repo, args)
 			})
 
 			Expect(strings.TrimSpace(output)).Should(MatchRegexp("End Game"))
@@ -111,7 +111,7 @@ var _ = Describe("Main Interface", func() {
 			args := []string{"filename", "find-by-year", "--year", "2019"}
 
 			output := captureStdout(func() {
-				Run(mr, args)
+				Run(repo, args)
 			})
 
 			Expect(strings.TrimSpace(output)).Should(MatchRegexp("Infinity War"))
@@ -123,7 +123,7 @@ var _ = Describe("Main Interface", func() {
 			args := []string{"filename", "find-by-title", "--keyword", "game"}
 
 			output := captureStdout(func() {
-				Run(mr, args)
+				Run(repo, args)
 			})
 
 			Expect(strings.TrimSpace(output)).Should(MatchRegexp("End Game"))

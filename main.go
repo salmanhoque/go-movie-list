@@ -15,7 +15,7 @@ func main() {
 		Filename: filename,
 	}
 
-	mr := movie.Repo{Storage: fileStorage}
+	movieRepo := movie.Repo{Storage: fileStorage}
 
-	cmd.Run(mr, os.Args)
+	cmd.Run(movieRepo, os.Args)
 }

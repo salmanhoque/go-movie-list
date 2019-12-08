@@ -19,13 +19,13 @@ type Repo struct {
 }
 
 // Add movie to the list
-func (m *Repo) Add(name string, year string, rating float64) (Schema, error) {
+func (r *Repo) Add(name string, year string, rating float64) (Schema, error) {
 	var err error
 	var newMoview Schema
 
 	newMoview = Schema{MovieName: name, ReleaseYear: year, MovieRating: rating}
-	m.MovieList = append(m.MovieList, newMoview)
-	err = m.Storage.Save(m.MovieList)
+	r.MovieList = append(r.MovieList, newMoview)
+	err = r.Storage.Save(r.MovieList)
 	if err != nil {
 		return newMoview, err
 	}
@@ -34,21 +34,21 @@ func (m *Repo) Add(name string, year string, rating float64) (Schema, error) {
 }
 
 // SortByRating - sort movie by rating
-func (m *Repo) SortByRating() {
-	movies := m.MovieList
+func (r *Repo) SortByRating() {
+	movies := r.MovieList
 
 	sort.Slice(movies, func(i, j int) bool {
 		return movies[i].MovieRating > movies[j].MovieRating
 	})
 
-	m.MovieList = movies
+	r.MovieList = movies
 }
 
 // FindByYear - find movies of a year
-func (m *Repo) FindByYear(year int) []Schema {
+func (r *Repo) FindByYear(year int) []Schema {
 	var movies []Schema
 
-	for _, movie := range m.MovieList {
+	for _, movie := range r.MovieList {
 		if releaseYear, _ := strconv.Atoi(movie.ReleaseYear); releaseYear == year {
 			movies = append(movies, movie)
 		}
@@ -58,11 +58,11 @@ func (m *Repo) FindByYear(year int) []Schema {
 }
 
 // FindByTitle - find movie with a keyword search
-func (m *Repo) FindByTitle(name string) []Schema {
+func (r *Repo) FindByTitle(name string) []Schema {
 	var movies []Schema
 	re := regexp.MustCompile("(?i)" + name)
 
-	for _, movie := range m.MovieList {
+	for _, movie := range r.MovieList {
 		if re.Match([]byte(movie.MovieName)) {
 			movies = append(movies, movie)
 		}
