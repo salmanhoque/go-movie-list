@@ -60,4 +60,16 @@ var _ = Describe("JSON File Storage", func() {
 		})
 	})
 
+	It("creates file if not present", func() {
+		storage = JSONFileStorage{
+			Filename: "test_fixture/missing-file.json",
+		}
+
+		var movies []movie
+
+		Expect(storage.Read(&movies)).Should(Succeed())
+
+		// clean up after test
+		os.Remove(storage.Filename)
+	})
 })

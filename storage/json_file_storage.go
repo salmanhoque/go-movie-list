@@ -42,15 +42,19 @@ func (s JSONFileStorage) Read(list interface{}) error {
 	var err error
 
 	if _, err = os.Stat(s.Filename); os.IsNotExist(err) {
-		return errors.Wrap(err, "Can't able to find the file!")
+		if _, err = os.Create(s.Filename); err != nil {
+			return errors.Wrap(err, "Could not able to read from the file!")
+		}
+
+		return err
 	}
 
 	if data, err = ioutil.ReadFile(s.Filename); err != nil {
-		return errors.Wrap(err, "Can't able to read the file!")
+		return errors.Wrap(err, "Could not able to read from the file!")
 	}
 
 	if err = json.Unmarshal(data, &list); err != nil {
-		return errors.Wrap(err, "Can't able to parse the file")
+		return errors.Wrap(err, "Could not able to parse the file")
 	}
 
 	return err
