@@ -4,19 +4,12 @@ import (
 	"bytes"
 	"io"
 	"os"
-	"strings"
 	"testing"
 
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"github.com/salmanhoque/go-movie-list/domain/movie"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/suite"
 )
-
-func TestMain(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "Movie command-line app")
-}
 
 func captureStdout(f func()) string {
 	old := os.Stdout
@@ -47,86 +40,79 @@ func (ms *MockStorage) Read(list interface{}) error {
 	return args.Error(0)
 }
 
-var _ = Describe("Main Interface", func() {
-	var (
-		repo movie.Repo
-		err  error
-	)
+type CmdTestSuite struct {
+	suite.Suite
+	repo movie.Repo
+	err  error
+}
 
-	BeforeEach(func() {
-		storage := new(MockStorage)
-		movies := []movie.Schema{
-			{MovieName: "End Game", ReleaseYear: "2018", MovieRating: 9.2},
-			{MovieName: "Infinity War", ReleaseYear: "2019", MovieRating: 9.0},
-		}
+func (suite *CmdTestSuite) SetupTest() {
+	storage := new(MockStorage)
+	movies := []movie.Schema{
+		{MovieName: "End Game", ReleaseYear: "2018", MovieRating: 9.2},
+		{MovieName: "Infinity War", ReleaseYear: "2019", MovieRating: 9.0},
+	}
 
-		repo = movie.Repo{
-			MovieList: movies,
-			Storage:   storage,
-		}
+	suite.repo = movie.Repo{
+		MovieList: movies,
+		Storage:   storage,
+	}
 
-		storage.On("Read").Return(err)
-		storage.On("Save").Return(err)
+	storage.On("Read").Return(suite.err)
+	storage.On("Save").Return(suite.err)
+}
+
+func (suite *CmdTestSuite) TestListToListAllMovies() {
+	args := []string{"filename", "list"}
+
+	output := captureStdout(func() {
+		Run(suite.repo, args)
 	})
 
-	Describe("list", func() {
-		It("lists all movies", func() {
-			args := []string{"filename", "list"}
+	suite.Contains(output, "End Game")
+	suite.Contains(output, "Infinity War")
+}
 
-			output := captureStdout(func() {
-				Run(repo, args)
-			})
+func (suite *CmdTestSuite) TestAddToAddMoviesToTheList() {
+	args := []string{"filename", "add", "--name", "Joker", "--year", "2019", "--rating", "9.2"}
 
-			Expect(output).Should(MatchRegexp("End Game"))
-			Expect(output).Should(MatchRegexp("Infinity War"))
-		})
+	output := captureStdout(func() {
+		Run(suite.repo, args)
 	})
 
-	Describe("add", func() {
-		It("add movies", func() {
-			args := []string{"filename", "add", "--name", "Joker", "--year", "2019", "--rating", "9.2"}
+	suite.Contains(output, "Added Joker")
+}
 
-			output := captureStdout(func() {
-				Run(repo, args)
-			})
+func (suite *CmdTestSuite) TestListByRatingReturnsFilteredMoviesByRating() {
+	args := []string{"filename", "list-by-rating"}
 
-			Expect(strings.TrimSpace(output)).Should(MatchRegexp("Added Joker"))
-		})
+	output := captureStdout(func() {
+		Run(suite.repo, args)
 	})
 
-	Describe("list-by-rating", func() {
-		It("sorts movies by rating", func() {
-			args := []string{"filename", "list-by-rating"}
+	suite.Contains(output, "End Game")
+}
 
-			output := captureStdout(func() {
-				Run(repo, args)
-			})
+func (suite *CmdTestSuite) TestfindByYearReturnsFilteredMoviesByYear() {
+	args := []string{"filename", "find-by-year", "--year", "2019"}
 
-			Expect(strings.TrimSpace(output)).Should(MatchRegexp("End Game"))
-		})
+	output := captureStdout(func() {
+		Run(suite.repo, args)
 	})
 
-	Describe("find-by-year", func() {
-		It("finds movies of a year", func() {
-			args := []string{"filename", "find-by-year", "--year", "2019"}
+	suite.Contains(output, "Infinity War")
+}
 
-			output := captureStdout(func() {
-				Run(repo, args)
-			})
+func (suite *CmdTestSuite) TestFindByTitleReturnsFilteredMoviesByKeywor() {
+	args := []string{"filename", "find-by-title", "--keyword", "game"}
 
-			Expect(strings.TrimSpace(output)).Should(MatchRegexp("Infinity War"))
-		})
+	output := captureStdout(func() {
+		Run(suite.repo, args)
 	})
 
-	Describe("find-by-title", func() {
-		It("finds movies by a keyword", func() {
-			args := []string{"filename", "find-by-title", "--keyword", "game"}
+	suite.Contains(output, "End Game")
+}
 
-			output := captureStdout(func() {
-				Run(repo, args)
-			})
-
-			Expect(strings.TrimSpace(output)).Should(MatchRegexp("End Game"))
-		})
-	})
-})
+func TestCmdTestSuite(t *testing.T) {
+	suite.Run(t, new(CmdTestSuite))
+}
